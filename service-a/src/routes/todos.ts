@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { v4 as uuidv4 } from 'uuid';
 import { TodoEvent } from 'shared';
 import { publishTodo } from '../producer.js';
+import { saveTodo, getAllTodos } from '../repository.js';
 
 export async function todoRoutes(fastify: FastifyInstance) {
   fastify.post('/todos', async (request, reply) => {
@@ -23,6 +24,10 @@ export async function todoRoutes(fastify: FastifyInstance) {
     };
 
     try {
+      // Save to database first
+      await saveTodo(todo);
+      
+      // Then publish to Kafka
       await publishTodo(todo);
       
       return reply.code(201).send({
@@ -32,7 +37,24 @@ export async function todoRoutes(fastify: FastifyInstance) {
     } catch (error) {
       return reply.code(503).send({
         success: false,
-        error: 'Failed to publish event',
+        error: 'Failed to save todo or publish event',
+      });
+    }
+  });
+
+  fastify.get('/todos', async (request, reply) => {
+    try {
+      const todos = await getAllTodos();
+      
+      return reply.code(200).send({
+        success: true,
+        count: todos.length,
+        todos,
+      });
+    } catch (error) {
+      return reply.code(500).send({
+        success: false,
+        error: 'Failed to retrieve todos',
       });
     }
   });

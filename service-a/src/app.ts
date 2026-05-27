@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import { connectProducer, disconnectProducer } from './kafka.js';
+import { connectDatabase, disconnectDatabase } from './database.js';
 import { todoRoutes } from './routes/todos.js';
 
 const fastify = Fastify({
@@ -10,6 +11,7 @@ fastify.register(todoRoutes);
 
 async function start() {
   try {
+    await connectDatabase();
     await connectProducer();
     
     await fastify.listen({ port: 3000, host: '0.0.0.0' });
@@ -23,6 +25,7 @@ async function start() {
 async function shutdown() {
   console.log('\n[Service A] Shutting down gracefully...');
   await disconnectProducer();
+  await disconnectDatabase();
   await fastify.close();
   process.exit(0);
 }

@@ -1,8 +1,10 @@
 import { connectConsumer, disconnectConsumer } from './kafka.js';
 import { startConsuming } from './consumer.js';
+import { connectDatabase, disconnectDatabase } from './database.js';
 
 async function start() {
   try {
+    await connectDatabase();
     await connectConsumer();
     await startConsuming();
     console.log('[Service C] Started consuming from todos.clean');
@@ -15,6 +17,7 @@ async function start() {
 async function shutdown() {
   console.log('\n[Service C] Shutting down gracefully...');
   await disconnectConsumer();
+  await disconnectDatabase();
   process.exit(0);
 }
 

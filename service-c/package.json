@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "kafkajs": "^2.2.0",
+    "neo4j-driver": "^5.15.0",
     "shared": "workspace:*"
   },
   "devDependencies": {

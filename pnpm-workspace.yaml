@@ -1,0 +1,5 @@
+packages:
+  - 'shared'
+  - 'service-a'
+  - 'service-b'
+  - 'service-c'

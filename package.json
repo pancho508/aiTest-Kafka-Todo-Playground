@@ -1,0 +1,10 @@
+{
+  "name": "kafka-playground",
+  "private": true,
+  "workspaces": ["shared", "service-a", "service-b", "service-c"],
+  "scripts": {
+    "dev:a": "pnpm --filter service-a dev",
+    "dev:b": "pnpm --filter service-b dev",
+    "dev:c": "pnpm --filter service-c dev"
+  }
+}
